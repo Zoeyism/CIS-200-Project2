@@ -9,6 +9,7 @@ struct Entry
 	char JobType; // A, B, C, or D; D is HIGH priority
 	int ArrivalTime; // Varies by job type
 	int ProcessingTime; // Also varies by job type
+	int JobIndex; // Index of entry within specific job
 
 	// Type		Arrival Time	Processing Time
 	// A		5 +/- 1			3 +/- 2 
@@ -30,10 +31,70 @@ Entry CreateEntry(char jobT)
 	return newE;
 }
 
-void SaveEntryToFile(fstream& file)
+void SaveEntriesToFile(fstream& file)
 {
+	// LinkedList SomeLinkedList = {};
+	Entry temp_entry = { 'A', 0, 0 };
 	if (file)
 	{
-		
+		// For creating job type A entries
+		for (int i = 0; i < TOTAL_ENTRIES[0]; i++)
+		{
+			temp_entry.JobType = 'A';
+			temp_entry.ArrivalTime = 4 + rand() % 3;
+			temp_entry.ProcessingTime = 1 + rand() % 5;
+			temp_entry.JobIndex = i;
+
+			// temp_entry.ArrivalTime += SomeLinkedList[i-1].ArrivalTime;
+
+			// SomeLinkedList.append(temp_entry);
+		}
+
+		// For creating job type B entries
+		for (int i = 0; i < TOTAL_ENTRIES[1]; i++)
+		{
+			temp_entry.JobType = 'B';
+			temp_entry.ArrivalTime = 6 + rand() % 3;
+			temp_entry.ProcessingTime = 2 + rand() % 7;
+			temp_entry.JobIndex = i;
+
+			// temp_entry.ArrivalTime += SomeLinkedList[i-1].ArrivalTime;
+
+			// SomeLinkedList.append(temp_entry);
+		}
+
+		// For creating job type C entries
+		for (int i = 0; i < TOTAL_ENTRIES[2]; i++)
+
+		{
+			temp_entry.JobType = 'C';
+			temp_entry.ArrivalTime = 4 + rand() % 15;
+			temp_entry.ProcessingTime = 6 + rand() % 7;
+			temp_entry.JobIndex = i;
+
+			// temp_entry.ArrivalTime += SomeLinkedList[i-1].ArrivalTime;
+
+			// SomeLinkedList.append(temp_entry);
+		}
+
+		// For creating job type D entries
+		for (int i = 0; i < TOTAL_ENTRIES[3]; i++)
+
+		{
+			temp_entry.JobType = 'D';
+			temp_entry.ArrivalTime = 4 + rand() % 11;
+			temp_entry.ProcessingTime = 2 + rand() % 21;
+			temp_entry.JobIndex = i;
+
+			// temp_entry.ArrivalTime += SomeLinkedList[i-1].ArrivalTime;
+
+			// SomeLinkedList.append(temp_entry);
+		}
+
+		while (linkedListPtr != nullptr)
+		{
+
+		}
+
 	}
 }
