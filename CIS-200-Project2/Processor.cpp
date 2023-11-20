@@ -2,16 +2,17 @@
 
 bool Processor::isHighPriority()
 {
-	if()
-	if (currentEntry.JobType == 'D')
+	if (active)
 	{
-		return true;
+		if (currentEntry.JobType == 'D')
+		{
+			return true;
+		}
 	}
-	else
-		return false;
+	return false;
 }
 
-void Processor::assignJob(Entry newEntry)
+void Processor::assignJob(Entry newEntry) 
 {
 	currentEntry = newEntry;
 	active = true;
@@ -19,5 +20,23 @@ void Processor::assignJob(Entry newEntry)
 
 Entry Processor::replaceJob(Entry newEntry)
 {
+	Entry temp = currentEntry;
+	currentEntry = newEntry;
+	return temp;
+}
 
+bool Processor::advanceJob() 
+{
+	currentEntry.ProcessingTime--;
+	if (currentEntry.ProcessingTime < 1)
+	{
+		currentTimeProcessing = 0;
+		active = false;
+		return true;
+	}
+	else
+	{
+		currentTimeProcessing++;
+		return false;
+	}
 }
