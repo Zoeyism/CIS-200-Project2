@@ -15,5 +15,5 @@ public:
 
 	void assignJob(Entry newEntry);// assigns job, does not check if there is already a job, does not reset currenttime processing to 0
 	Entry replaceJob(Entry newEntry);// assigns job, returns current job, for use with overriding a low priority job with a high priority one
-	bool advanceJob(); //advances time for current job, if job finishes, sets active to false, returns true if job is completed
+	bool advanceJob(); //advances time for current job, if job finishes, sets active to false and sets currentTimeProcessing to 0, returns true if job is completed
 };
