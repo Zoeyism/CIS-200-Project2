@@ -5,8 +5,6 @@
 
 using namespace std;
 
-
-
 const int ENTRY_SIZE = sizeof(Entry);
 
 const int TOTAL_ENTRIES[] = { 2400, 1650, 1100, 1200  }; // In order, A, B, C, D quantities
