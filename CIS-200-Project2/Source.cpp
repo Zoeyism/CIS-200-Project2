@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int main()
+void TestLinkedList()
 {
 	LinkedList<int> test;
 	test.AppendList(3);
@@ -12,9 +12,17 @@ int main()
 	test.AppendList(1);
 	test.AppendList(8);
 
-	test = *test.MergeSort();
-
+	cout << "\n\tTest List before MergeSort: ";
 	test.PrintList();
 
+	test = *test.MergeSort();
+
+	cout << "\n\tTest List after MergeSort:  ";
+	test.PrintList();
+}
+
+int main()
+{
+	
 	return 0;
 }
