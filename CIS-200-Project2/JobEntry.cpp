@@ -14,3 +14,5 @@ struct Entry
 
 	// 5 +/- 1 is 4, 5, 6; -> 4 + rand()%3
 };
+
+const int ENTRY_SIZE = sizeof(Entry);
