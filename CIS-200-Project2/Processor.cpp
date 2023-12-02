@@ -34,9 +34,9 @@ Entry Processor::replaceJob(Entry newEntry)
 
 bool Processor::advanceJob() 
 {
-	// Decreases remaining processing time, and returns whether the job is completed or not.
+	// Decreases remaining processing time, and returns whether the job has completed at this moment or not.
 	currentEntry.ProcessingTime--;
-	if (currentEntry.ProcessingTime < 1)
+	if (currentEntry.ProcessingTime < 1 && active) // Must be active to return that the job has advanced.
 	{
 		currentTimeProcessing = 0;
 		active = false;

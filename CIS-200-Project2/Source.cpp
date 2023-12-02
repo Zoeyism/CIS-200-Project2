@@ -88,7 +88,10 @@ int main()
 		if (time == 500)
 		{
 			//first report
-			cout << totalA << ' ' << totalB << ' ' << totalC << ' ' << totalD;
+			cout << "\n\tTotal A: " << totalA << "\tCompleted A: " << compA 
+				<< "\n\tTotal B: " << totalB << "\tCompleted B: " << compB
+				<< "\n\tTotal C: " << totalC << "\tCompleted C: " << compC 
+				<< "\n\tTotal D: " << totalD << "\tCompleted D: " << compD << endl << endl;
 			system("Pause");
 		}
 
@@ -226,12 +229,15 @@ int main()
 
 	}
 	//second report
-
+	cout << "\n\tTotal A: " << totalA << "\tCompleted A: " << compA
+		<< "\n\tTotal B: " << totalB << "\tCompleted B: " << compB
+		<< "\n\tTotal C: " << totalC << "\tCompleted C: " << compC
+		<< "\n\tTotal D: " << totalD << "\tCompleted D: " << compD << endl << endl;
+	system("Pause");
 
 	// Deleting all pointers
 	deleteLinkedNodes(priorityQueue);
 	deleteLinkedNodes(regularQueue);
-	deleteLinkedNodes(tempQ);
 
 	return 0;
 }
