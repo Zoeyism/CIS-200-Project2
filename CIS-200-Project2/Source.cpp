@@ -29,6 +29,24 @@ struct listNode // linked list node for queues
 	listNode* next;
 };
 
+int deleteLinkedNodes(listNode* head)
+{
+	// Takes the head pointer in a linked list, and deletes all nodes in the from the
+	// header onwards. Returns # of nodes deleted with this process.
+	int nodes_deleted = 0;
+	listNode* temp = head;
+	listNode* temp_last = nullptr;
+	while (temp != nullptr)
+	{
+		temp_last = temp;
+		temp = temp->next;
+		delete temp_last;
+		nodes_deleted++;
+	}
+
+	return nodes_deleted;
+}
+
 int main()
 {
 	ifstream entries; 
@@ -59,6 +77,9 @@ int main()
 	int compC = 0;
 	int compD = 0;
 
+	const int TOTAL_PROC = 1; // Total processors. Constant int for easy changing between runs.
+
+	Processor proc_list[TOTAL_PROC];
 
 	entries.read((char*)&incoming, ENTRY_SIZE);
 
@@ -109,7 +130,7 @@ int main()
 				case 'C':
 					totalC++;
 				}
-				if (regularQueue == nullptr) // empty queue
+				if (regularQueue == nullptr) // If empty queue, create new head node
 				{
 					regularQueue = new listNode;
 					regularQueue->data = incoming;
@@ -133,7 +154,84 @@ int main()
 			entries.read((char*)&incoming, ENTRY_SIZE);
 		} 
 
+		// Advancing time for processors and assigning priority/regular jobs as needed
+		for (int i = 0; i < TOTAL_PROC; i++)
+		{
+			// If, after advancing the job the processing time reaches 0, 
+			if (proc_list[i].advanceJob())
+			{
+				// then add to completed jobs
+				switch (proc_list[i].currentJob().JobType)
+				{
+				case 'A':
+					compA += 1;
+					break;
+				case 'B':
+					compB += 1;
+					break;
+				case 'C':
+					compC += 1;
+					break;
+				case 'D':
+					compD += 1;
+				}
+			}
+
+			// If there is a priority entry in the priority queue, attempt to swap in to the current processor
+			if (priorityQueue != nullptr)
+			{
+				// If the current processor is not active, or is not high priority (but also active), then assign a high priority entry
+				if (!proc_list[i].isActive() || !proc_list[i].isHighPriority())
+				{
+					// If it is active but not high priority, then swap the entry into the non-priority queue.
+					if (proc_list[i].isActive() && !proc_list[i].isHighPriority())
+					{
+						// Works in both cases: if regularQueue == nullptr, or if it is has nodes
+						tempQ = regularQueue; 
+
+						// make a new node the new head of the list, set data == to the replaced job
+						regularQueue = new listNode;
+						regularQueue->next = tempQ;
+						regularQueue->data = proc_list[i].replaceJob(priorityQueue->data);
+					}
+					else // If not active, then just assign the job in processor
+					{
+						proc_list[i].assignJob(priorityQueue->data);
+					}
+					// Remove assigned node from priority queue.
+					tempQ = priorityQueue;
+					priorityQueue = priorityQueue->next;
+					delete tempQ;
+					tempQ = nullptr;
+				}
+			}
+			// Otherwise, if the regular queue has entries to add...
+			else if (regularQueue != nullptr)
+			{
+				// If the processor isn't active, add in the new job; otherwise, do nothing.
+				if (!proc_list[i].isActive())
+				{
+					proc_list[i].assignJob(regularQueue->data);
+
+					// Remove assigned node from regular queue.
+					tempQ = regularQueue;
+					regularQueue = regularQueue->next;
+					delete tempQ;
+					tempQ = nullptr;
+				}
+			}
+		}
+
+
+
 	}
 	//second report
+
+
+	// Deleting all pointers
+	deleteLinkedNodes(priorityQueue);
+	deleteLinkedNodes(regularQueue);
+	deleteLinkedNodes(tempQ);
+
 	return 0;
 }

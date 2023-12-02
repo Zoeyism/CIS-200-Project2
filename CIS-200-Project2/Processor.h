@@ -8,6 +8,7 @@ class Processor
 	bool active;
 
 public:
+	Processor(); // Default constructor; sets up base values.
 	bool isActive() { return active; } //true if running a job, otherwise false
 	bool isHighPriority();// true if running a high priority job, otherwise false
 	int timeProcessing() { return currentTimeProcessing; } //time spent processing current job

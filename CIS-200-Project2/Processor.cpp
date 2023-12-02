@@ -1,5 +1,12 @@
 #include "Processor.h"
 
+Processor::Processor()
+{
+	currentEntry = {};
+	currentTimeProcessing = 0;
+	active = false;
+}
+
 bool Processor::isHighPriority()
 {
 	if (active)
@@ -27,6 +34,7 @@ Entry Processor::replaceJob(Entry newEntry)
 
 bool Processor::advanceJob() 
 {
+	// Decreases remaining processing time, and returns whether the job is completed or not.
 	currentEntry.ProcessingTime--;
 	if (currentEntry.ProcessingTime < 1)
 	{
