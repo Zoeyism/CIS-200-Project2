@@ -83,11 +83,11 @@ int main()
 	int totalProc = 0; //User Defined Amount of processors
 	cout << "How many processors shall be used?\n";
 	cin >> totalProc;
-	while (cin.fail())
+	while (cin.fail() || totalProc <= 0 || totalProc > 100)
 	{
 		cin.clear();
-		cin.ignore(100, '\n');
-		cout << "Error, not a number. Re-enter amount: ";
+		cin.ignore(10000, '\n');
+		cout << "Error, not a valid number. Re-enter amount: ";
 		cin >> totalProc;
 	}
 
