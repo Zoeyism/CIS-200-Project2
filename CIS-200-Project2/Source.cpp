@@ -77,9 +77,22 @@ int main()
 	int compC = 0;
 	int compD = 0;
 
-	const int TOTAL_PROC = 1; // Total processors. Constant int for easy changing between runs.
+	//const int TOTAL_PROC = 1; // Total processors. Constant int for easy changing between runs.
+	//Processor proc_list[TOTAL_PROC];
 
-	Processor proc_list[TOTAL_PROC];
+	int totalProc = 0; //User Defined Amount of processors
+	cout << "How many processors shall be used?\n";
+	cin >> totalProc;
+	while (cin.fail())
+	{
+		cin.clear();
+		cin.ignore(100, '\n');
+		cout << "Error, not a number. Re-enter amount: ";
+		cin >> totalProc;
+	}
+
+	Processor* proc_list = new Processor[totalProc];
+
 
 	entries.read((char*)&incoming, ENTRY_SIZE);
 
@@ -158,7 +171,8 @@ int main()
 		} 
 
 		// Advancing time for processors and assigning priority/regular jobs as needed
-		for (int i = 0; i < TOTAL_PROC; i++)
+		//for (int i = 0; i < TOTAL_PROC; i++)
+		for (int i = 0; i < totalProc; i++)
 		{
 			// If, after advancing the job the processing time reaches 0, 
 			if (proc_list[i].advanceJob())
