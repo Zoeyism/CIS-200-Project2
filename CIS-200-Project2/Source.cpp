@@ -180,8 +180,11 @@ int main()
 	int compC = 0;
 	int compD = 0;
 
-	//const int TOTAL_PROC = 1; // Total processors. Constant int for easy changing between runs.
-	//Processor proc_list[TOTAL_PROC];
+	//TOTAL WAIT TIME for each job type; used for average wait time of each job type
+	int waitA = 0;
+	int waitB = 0;
+	int waitC = 0;
+	int waitD = 0;
 
 	int totalProc = 0; //User Defined Amount of processors
 	cout << "How many processors shall be used?\n";
@@ -197,7 +200,7 @@ int main()
 	Processor* proc_list = new Processor[totalProc];
 
 	// Head of log file
-	data_logger.LogError("\tTotal Processors: " + to_string(totalProc) + "\n");
+	data_logger.LogError("\t\tTotal Processors: " + to_string(totalProc) + "\n");
 
 	entries.read((char*)&incoming, ENTRY_SIZE);
 
@@ -315,10 +318,40 @@ int main()
 						// make a new node the new head of the list, set data == to the replaced job
 						regularQueue = new listNode;
 						regularQueue->next = tempQ;
+
+						// Before replacing, need to correct the wait time counts
+						switch (proc_list[i].currentJob().JobType)
+						{
+						case 'A':
+							waitA += time - proc_list[i].currentJob().ArrivalTime - proc_list[i].timeProcessing() + proc_list[i].currentJob().ProcessingTime;
+							break;
+						case 'B':
+							waitB += time - proc_list[i].currentJob().ArrivalTime - proc_list[i].timeProcessing() + proc_list[i].currentJob().ProcessingTime;
+							break;
+						case 'C':
+							waitC += time - proc_list[i].currentJob().ArrivalTime - proc_list[i].timeProcessing() + proc_list[i].currentJob().ProcessingTime;
+						}
+
 						regularQueue->data = proc_list[i].replaceJob(priorityQueue->data);
 					}
 					else // If not active, then just assign the job in processor
 					{
+						// Before assigning, need to correct the wait time counts. ProcessingTime continues decreasing even if the job is done, so it still
+						// accurately updates the wait time even if there's been a delay between finishing the job and assigning the new job.
+						switch (proc_list[i].currentJob().JobType)
+						{
+						case 'A':
+							waitA += time - proc_list[i].currentJob().ArrivalTime - proc_list[i].timeProcessing() + proc_list[i].currentJob().ProcessingTime;
+							break;
+						case 'B':
+							waitB += time - proc_list[i].currentJob().ArrivalTime - proc_list[i].timeProcessing() + proc_list[i].currentJob().ProcessingTime;
+							break;
+						case 'C':
+							waitC += time - proc_list[i].currentJob().ArrivalTime - proc_list[i].timeProcessing() + proc_list[i].currentJob().ProcessingTime;
+							break;
+						case 'D':
+							waitD += time - proc_list[i].currentJob().ArrivalTime - proc_list[i].timeProcessing() + proc_list[i].currentJob().ProcessingTime;
+						}
 						proc_list[i].assignJob(priorityQueue->data);
 					}
 					// Remove assigned node from priority queue.
@@ -352,12 +385,45 @@ int main()
 		data_logger.LogError(CreateLogString(time, proc_list, totalProc, regularQueue, priorityQueue, AddHeader));
 
 	}
+	// Adjusting wait times for remaining queue items
+	tempQ = regularQueue;
+	while (tempQ != nullptr)
+	{
+		if (tempQ->data.ArrivalTime < 10000)
+		{
+			switch (tempQ->data.JobType)
+			{
+			case 'A':
+				waitA += 10000 - tempQ->data.ArrivalTime;
+				break;
+			case 'B':
+				waitB += 10000 - tempQ->data.ArrivalTime;
+				break;
+			case 'C':
+				waitC += 10000 - tempQ->data.ArrivalTime;
+			}
+		}
+		tempQ = tempQ->next;
+	}
+	tempQ = priorityQueue;
+	while (tempQ != nullptr)
+	{
+		waitD += 10000 - tempQ->data.ArrivalTime;
+		tempQ = tempQ->next;
+	}
+
+
 	//second report
 	cout << "\n\tCurrent Time: " << 10000
 		<< "\n\tTotal A: " << totalA << "\tCompleted A: " << compA
 		<< "\n\tTotal B: " << totalB << "\tCompleted B: " << compB
 		<< "\n\tTotal C: " << totalC << "\tCompleted C: " << compC
-		<< "\n\tTotal D: " << totalD << "\tCompleted D: " << compD << endl << endl;
+		<< "\n\tTotal D: " << totalD << "\tCompleted D: " << compD
+		<< "\n\tWait Averages"
+		<< "\n\tA: " << fixed << setprecision(3) << ((float)waitA) / totalA << "s"
+		<< "\n\tB: " << ((float)waitB) / totalB << "s"
+		<< "\n\tC: " << ((float)waitC) / totalC << "s"
+		<< "\n\tD: " << ((float)waitD) / totalD << "s" << endl << endl;
 	system("Pause");
 
 	// Deleting all pointers

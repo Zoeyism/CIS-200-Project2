@@ -23,10 +23,12 @@ void Processor::assignJob(Entry newEntry)
 {
 	currentEntry = newEntry;
 	active = true;
+	currentTimeProcessing = 0;
 }
 
 Entry Processor::replaceJob(Entry newEntry)
 {
+	currentTimeProcessing = 0;
 	Entry temp = currentEntry;
 	currentEntry = newEntry;
 	return temp;
@@ -38,7 +40,6 @@ bool Processor::advanceJob()
 	currentEntry.ProcessingTime--;
 	if (currentEntry.ProcessingTime < 1 && active) // Must be active to return that the job has advanced.
 	{
-		currentTimeProcessing = 0;
 		active = false;
 		return true;
 	}
