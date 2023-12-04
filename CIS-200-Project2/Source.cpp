@@ -1,7 +1,7 @@
 /***************
 * Authors: Lyla Kerr & Zoey Vizzaccaro
 * Creation Date: 26 November 2023
-* Modification Date: 30 November 2023
+* Modification Date: 1 December 2023
 * Purpose: Simulates proccessors doing jobs
 * ***************/
 #include "Processor.h"
@@ -168,10 +168,20 @@ int main()
 	int compD = 0;
 
 	//TOTAL WAIT TIME for each job type; used for average wait time of each job type
-	int waitA = 0;
+	/*int waitA = 0;
 	int waitB = 0;
 	int waitC = 0;
-	int waitD = 0;
+	int waitD = 0;*/
+
+	//QUEUE SIZE VARIABLES
+	int currQSize = 0;
+	int waitTotal = 0;
+	int maxQSize = 0;
+
+	//CPU VARIABLES
+	int processingTime = 0;
+	int idleTime = 0;
+
 
 	int totalProc = 0; //User Defined Amount of processors
 	cout << "How many processors shall be used?\n";
@@ -196,17 +206,36 @@ int main()
 		if (time == 500)
 		{
 			//first report
-			cout << "\n\tCurrent Time: " << time
-				<< "\n\tTotal A: " << totalA << "\tCompleted A: " << compA 
-				<< "\n\tTotal B: " << totalB << "\tCompleted B: " << compB
-				<< "\n\tTotal C: " << totalC << "\tCompleted C: " << compC 
-				<< "\n\tTotal D: " << totalD << "\tCompleted D: " << compD << endl << endl;
+			cout << "\n\n Metrics 1:\n\n";
+			cout << "Number of processor(s) being used: " << totalProc << endl
+				<< "Current queue size: " << currQSize << endl
+				<< "Average queue size: " << waitTotal/time << endl 
+				<< "Maximum Jobs in queue: " << maxQSize << endl 
+				<< "Total time jobs are in queue: " << waitTotal << " time units" << endl 
+				<< "Average time jobs are in queue: " << waitTotal/(totalA+totalB+totalC+totalD) << " time units" << endl 
+
+				<< "Total number of A jobs arrived: " << totalA << endl
+				<< "Total number of A jobs completed: " << compA << endl
+				<< "Total number of B jobs arrived: " << totalB << endl
+				<< "Total number of B jobs completed: " << compB << endl
+				<< "Total number of C jobs arrived: " << totalC << endl
+				<< "Total number of C jobs completed: " << compC << endl
+				<< "Total number of D jobs arrived: " << totalD << endl
+				<< "Total number of D jobs completed: " << compD << endl
+
+				<< "Total jobs completed: " << compA + compB + compC + compD << endl
+				<< "Total time CPU(s) were processing: " << processingTime << " time units" << endl 
+				<< "Total time CPU(s) were idle: " << idleTime << " time units" << endl; 
 			system("Pause");
 		}
 
 		// new Arrival(s)
 		while (incoming.ArrivalTime <= time)
 		{
+			currQSize++;
+			if (currQSize > maxQSize)
+				maxQSize = currQSize;
+
 			if (incoming.JobType == 'D') //priority job
 			{
 				totalD++;
@@ -270,25 +299,31 @@ int main()
 		//for (int i = 0; i < TOTAL_PROC; i++)
 		for (int i = 0; i < totalProc; i++)
 		{
-			// If, after advancing the job the processing time reaches 0, 
-			if (proc_list[i].advanceJob())
-			{
-				// then add to completed jobs
-				switch (proc_list[i].currentJob().JobType)
+			if (proc_list[i].isActive())
 				{
-				case 'A':
-					compA += 1;
-					break;
-				case 'B':
-					compB += 1;
-					break;
-				case 'C':
-					compC += 1;
-					break;
-				case 'D':
-					compD += 1;
+				processingTime++;
+				// If, after advancing the job the processing time reaches 0, 
+				if (proc_list[i].advanceJob())
+				{
+					// then add to completed jobs
+					switch (proc_list[i].currentJob().JobType)
+					{
+					case 'A':
+						compA += 1;
+						break;
+					case 'B':
+						compB += 1;
+						break;
+					case 'C':
+						compC += 1;
+						break;
+					case 'D':
+						compD += 1;
+					}
 				}
 			}
+			else
+				idleTime++;
 
 			// If there is a priority entry in the priority queue, attempt to swap in to the current processor
 			if (priorityQueue != nullptr)
@@ -307,7 +342,7 @@ int main()
 						regularQueue->next = tempQ;
 
 						// Before replacing, need to correct the wait time counts
-						switch (proc_list[i].currentJob().JobType)
+						/*switch (proc_list[i].currentJob().JobType)
 						{
 						case 'A':
 							waitA += time - proc_list[i].currentJob().ArrivalTime - proc_list[i].timeProcessing() + proc_list[i].currentJob().ProcessingTime;
@@ -317,15 +352,16 @@ int main()
 							break;
 						case 'C':
 							waitC += time - proc_list[i].currentJob().ArrivalTime - proc_list[i].timeProcessing() + proc_list[i].currentJob().ProcessingTime;
-						}
+						}*/
 
 						regularQueue->data = proc_list[i].replaceJob(priorityQueue->data);
 					}
 					else // If not active, then just assign the job in processor
 					{
+						currQSize--;
 						// Before assigning, need to correct the wait time counts. ProcessingTime continues decreasing even if the job is done, so it still
 						// accurately updates the wait time even if there's been a delay between finishing the job and assigning the new job.
-						switch (proc_list[i].currentJob().JobType)
+						/*switch (proc_list[i].currentJob().JobType)
 						{
 						case 'A':
 							waitA += time - proc_list[i].currentJob().ArrivalTime - proc_list[i].timeProcessing() + proc_list[i].currentJob().ProcessingTime;
@@ -338,7 +374,7 @@ int main()
 							break;
 						case 'D':
 							waitD += time - proc_list[i].currentJob().ArrivalTime - proc_list[i].timeProcessing() + proc_list[i].currentJob().ProcessingTime;
-						}
+						}*/
 						proc_list[i].assignJob(priorityQueue->data);
 					}
 					// Remove assigned node from priority queue.
@@ -354,6 +390,7 @@ int main()
 				// If the processor isn't active, add in the new job; otherwise, do nothing.
 				if (!proc_list[i].isActive())
 				{
+					currQSize--;
 					proc_list[i].assignJob(regularQueue->data);
 
 					// Remove assigned node from regular queue.
@@ -371,9 +408,10 @@ int main()
 			AddHeader = false;
 		data_logger.LogError(CreateLogString(time, proc_list, totalProc, regularQueue, priorityQueue, AddHeader));
 
+		waitTotal += currQSize;
 	}
 	// Adjusting wait times for remaining queue items
-	tempQ = regularQueue;
+	/*tempQ = regularQueue;
 	while (tempQ != nullptr)
 	{
 		if (tempQ->data.ArrivalTime < 10000)
@@ -397,20 +435,30 @@ int main()
 	{
 		waitD += 10000 - tempQ->data.ArrivalTime;
 		tempQ = tempQ->next;
-	}
+	}*/
 
 
 	//second report
-	cout << "\n\tCurrent Time: " << 10000
-		<< "\n\tTotal A: " << totalA << "\tCompleted A: " << compA
-		<< "\n\tTotal B: " << totalB << "\tCompleted B: " << compB
-		<< "\n\tTotal C: " << totalC << "\tCompleted C: " << compC
-		<< "\n\tTotal D: " << totalD << "\tCompleted D: " << compD
-		<< "\n\tWait Averages"
-		<< "\n\tA: " << fixed << setprecision(3) << ((float)waitA) / totalA << "s"
-		<< "\n\tB: " << ((float)waitB) / totalB << "s"
-		<< "\n\tC: " << ((float)waitC) / totalC << "s"
-		<< "\n\tD: " << ((float)waitD) / totalD << "s" << endl << endl;
+	cout << "\n\n Metrics 2:\n\n";
+	cout << "Number of processor(s) being used: " << totalProc << endl
+		<< "Current queue size: " << currQSize << endl
+		<< "Average queue size: " << waitTotal / 10000 << endl
+		<< "Maximum Jobs in queue: " << maxQSize << endl
+		<< "Total time jobs are in queue: " << waitTotal << " time units" << endl
+		<< "Average time jobs are in queue: " << waitTotal / (totalA + totalB + totalC + totalD) << " time units" << endl
+
+		<< "Total number of A jobs arrived: " << totalA << endl
+		<< "Total number of A jobs completed: " << compA << endl
+		<< "Total number of B jobs arrived: " << totalB << endl
+		<< "Total number of B jobs completed: " << compB << endl
+		<< "Total number of C jobs arrived: " << totalC << endl
+		<< "Total number of C jobs completed: " << compC << endl
+		<< "Total number of D jobs arrived: " << totalD << endl
+		<< "Total number of D jobs completed: " << compD << endl
+
+		<< "Total jobs completed: " << compA + compB + compC + compD << endl
+		<< "Total time CPU(s) were processing: " << processingTime << " time units" << endl
+		<< "Total time CPU(s) were idle: " << idleTime << " time units" << endl;
 	system("Pause");
 
 	// Deleting all pointers
