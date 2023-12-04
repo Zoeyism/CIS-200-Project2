@@ -1,4 +1,9 @@
-#include "LinkedList.h"
+/***************
+* Authors: Lyla Kerr & Zoey Vizzaccaro
+* Creation Date: 26 November 2023
+* Modification Date: 30 November 2023
+* Purpose: Simulates proccessors doing jobs
+* ***************/
 #include "Processor.h"
 #include <iostream>
 #include <fstream>
@@ -6,24 +11,6 @@
 #include <iomanip>
 
 using namespace std;
-
-void TestLinkedList()
-{
-	LinkedList<int> test;
-	test.AppendList(3);
-	test.AppendList(-1);
-	test.AppendList(17);
-	test.AppendList(1);
-	test.AppendList(8);
-
-	cout << "\n\tTest List before MergeSort: ";
-	test.PrintList();
-
-	test = *test.MergeSort();
-
-	cout << "\n\tTest List after MergeSort:  ";
-	test.PrintList();
-}
 
 struct listNode // linked list node for queues
 {

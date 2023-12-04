@@ -1,3 +1,9 @@
+/***************
+* Authors: Lyla Kerr & Zoey Vizzaccaro
+* Creation Date: 28 November 2023
+* Modification Date: 28 November 2023
+* Purpose: Simulates a linked list - unused in final project
+* ***************/
 #include <iostream>
 using namespace std;
 

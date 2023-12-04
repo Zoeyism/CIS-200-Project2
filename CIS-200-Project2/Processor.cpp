@@ -1,3 +1,9 @@
+/***************
+* Authors: Lyla Kerr & Zoey Vizzaccaro
+* Creation Date: 26 November 2023
+* Modification Date: 26 November 2023
+* Purpose: Simulates a proccessor that can do jobs
+* ***************/
 #include "Processor.h"
 
 Processor::Processor()

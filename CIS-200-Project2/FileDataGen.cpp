@@ -1,3 +1,10 @@
+/***************
+* Authors: Lyla Kerr & Zoey Vizzaccaro
+* Creation Date: 17 November 2023
+* Modification Date: 23 November 2023
+* Purpose: Create input file of jobs
+* ***************/
+
 #include <iostream>
 #include <fstream>
 #include <string>

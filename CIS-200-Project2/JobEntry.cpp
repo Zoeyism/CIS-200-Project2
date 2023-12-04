@@ -1,3 +1,9 @@
+/***************
+* Authors: Lyla Kerr & Zoey Vizzaccaro
+* Creation Date: 26 November 2023
+* Modification Date: 26 November 2023
+* Purpose: Simulates a job
+* ***************/
 struct Entry
 {
 	char JobType;		// A, B, C, or D; D is HIGH priority
