@@ -2,7 +2,7 @@
 * Authors: Lyla Kerr & Zoey Vizzaccaro
 * Creation Date: 26 November 2023
 * Modification Date: 4 December 2023
-* Purpose: Simulates proccessors doing jobs
+* Purpose: Simulates processors doing jobs
 * ***************/
 #include "Processor.h"
 #include <iostream>
